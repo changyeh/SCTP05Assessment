@@ -1,0 +1,29 @@
+{{#extends "base"}}
+    {{#block "content"}}
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>Client Name</td>
+                    <td>Birth Date</td>
+                    <td>Email</td>
+                    <td>Consultant Name</td>
+                    <td>Actions</td>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each clients}}
+                <tr>
+                    <td>{{this.first_name }} {{this.last_name}}</td>
+                    <td>{{formatDate this.birth_date}}</td>
+                    <td>{{this.email}}</td>
+                    <td>{{this.c_first_name}} {{this.c_last_name}}</td>
+                    <td>
+                        <a href="/clients/{{this.client_id}}/delete" class="btn btn-danger btn-sm">Delete</a>
+                        <a href="/clients/{{this.client_id}}/update" class="btn btn-success btn-sm">Update</a> 
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    {{/block}}
+{{/extends}}

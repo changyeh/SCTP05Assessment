@@ -38,18 +38,34 @@ async function main(){
     });
 
     app.get('/clients', async function (req, res) {
-        // we want the first element from the array returned from connection.execute
         const [clients] = await connection.execute(`
             SELECT clients.*, consultants.first_name as c_first_name, consultants.last_name as c_last_name from clients
                 LEFT JOIN consultants ON consultants.consultant_id = clients.consultant_id;
         `);
-console.log(clients[0]);
         res.render('clients/index', {
             clients
         })
     });
 
+    app.get('/clients/create', async function (req, res) {
+        const [consultants] = await connection.execute(`
+            SELECT * FROM consultants;
+        `);
+        res.render("clients/create", {
+            consultants
+        });
+    });
 
+    app.post('/clients/create', async function (req, res) {
+        const { first_name, last_name, birth_date, email, consultant_id } = req.body;
+        const query = `
+             INSERT INTO clients (first_name, last_name, birth_date, email, consultant_id) 
+             VALUES (?, ?, ?, ?, ?)
+        `;
+        const bindings = [first_name, last_name, birth_date, email, parseInt(consultant_id)];
+        await connection.execute(query, bindings);
+        res.redirect('/clients');
+    });
 }
 
 main();

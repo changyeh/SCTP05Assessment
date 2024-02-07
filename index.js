@@ -66,6 +66,25 @@ async function main(){
         await connection.execute(query, bindings);
         res.redirect('/clients');
     });
+
+    app.get('/clients/search', async function (req, res) {
+
+        let sql = `SELECT clients.*, consultants.first_name as c_first_name, consultants.last_name as c_last_name from clients
+            LEFT JOIN consultants ON consultants.consultant_id = clients.consultant_id
+            WHERE 1`;
+        const bindings = [];
+        if (req.query.searchTerms) {
+            sql += ` AND (clients.first_name LIKE ? OR clients.last_name LIKE ?)`;
+            bindings.push(`%${req.query.searchTerms}%`);
+            bindings.push(`%${req.query.searchTerms}%`);
+        }
+
+        const [clients] = await connection.execute(sql, bindings);
+
+        res.render('clients/search', {
+            clients
+        });
+    });
 }
 
 main();

@@ -1,0 +1,37 @@
+{{#extends "base"}}
+
+{{#block "content"}}
+<form method="GET">
+    <input type="text" name="searchTerms" class="form-control"/>
+    <input type="submit" class="btn btn-primary mt-2 ms-2" value="Search"/>
+</form>
+
+{{#extends "base"}}
+
+    {{#block "content"}}
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>Client Name</td>
+                    <td>Birth Date</td>
+                    <td>Email</td>
+                    <td>Consultant Name</td>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each clients}}
+                <tr>
+                    <td>{{this.first_name }} {{this.last_name}}</td>
+                    <td>{{formatDate this.birth_date}}</td>
+                    <td>{{this.email}}</td>
+                    <td>{{this.c_first_name}} {{this.c_last_name}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    {{/block}}
+
+{{/extends}}
+{{/block}}
+
+{{/extends}}

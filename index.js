@@ -26,7 +26,17 @@ wax.setLayoutPath('./views/layouts');
 hbs.handlebars.registerHelper('formatDate', function (dateString) {
     const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
     const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
-    return formattedDate;
+    const [month, day, year] = formattedDate.split('/');
+    const isoDate = `${day}-${month}-${year}`;
+    return isoDate;
+});
+
+hbs.handlebars.registerHelper('formatDate2', function (dateString) {
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
+    const [month, day, year] = formattedDate.split('/');
+    const isoDate = `${year}-${month}-${day}`;
+    return isoDate;
 });
 
 async function main(){
@@ -85,6 +95,30 @@ async function main(){
             clients
         });
     });
+
+    app.get('/clients/:client_id/update', async function (req, res) {
+        const query = "SELECT * FROM clients WHERE client_id = ?";
+        const [clients] = await connection.execute(query, [req.params.client_id]);
+        const client = clients[0];
+        const [consultants] = await connection.execute(`SELECT * from consultants`);
+        res.render('clients/update', {
+            client, consultants
+        })
+    });
+
+    app.post('/clients/:client_id/update', async function (req, res) {
+        const { first_name, last_name, birth_date, email, consultant_id } = req.body;
+        const query = `UPDATE clients SET first_name=?,
+                                            last_name =?,
+                                            birth_date=?,
+                                            email=?,
+                                            consultant_id=?
+                                        WHERE client_id = ?
+        `;
+        const bindings = [first_name, last_name, birth_date, email, consultant_id, req.params.client_id];
+        await connection.execute(query, bindings);
+        res.redirect('/clients');
+    })
 
     app.get('/clients/:client_id/delete', async function (req, res) {
         const sql = "select * from clients where client_id = ?";

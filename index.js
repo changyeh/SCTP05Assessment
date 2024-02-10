@@ -85,6 +85,21 @@ async function main(){
             clients
         });
     });
+
+    app.get('/clients/:client_id/delete', async function (req, res) {
+        const sql = "select * from clients where client_id = ?";
+        const [clients] = await connection.execute(sql, [req.params.client_id]);
+        const client = clients[0];
+        res.render('clients/delete', {
+            client,
+        })
+    });
+
+    app.post('/clients/:client_id/delete', async function (req, res) {
+        const query = "DELETE FROM clients WHERE client_id = ?";
+        await connection.execute(query, [req.params.client_id]);
+        res.redirect('/clients');
+    });
 }
 
 main();

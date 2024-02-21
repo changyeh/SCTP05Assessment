@@ -47,6 +47,10 @@ async function main(){
         password: process.env.DB_PASSWORD
     });
 
+    app.get('/', (req, res) => {
+        res.redirect('/clients');
+    });
+
     app.get('/clients', async function (req, res) {
         const [clients] = await connection.execute(`
             SELECT clients.*, consultants.first_name as c_first_name, consultants.last_name as c_last_name from clients
